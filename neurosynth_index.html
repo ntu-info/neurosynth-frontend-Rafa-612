@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeuroSynth Frontend – Studies Search</title>
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .smooth-scroll { scroll-behavior: smooth; }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <header class="border-b bg-white sticky top-0 z-10">
+      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <h1 class="text-xl font-semibold tracking-tight">NeuroSynth</h1>
+        <span class="text-sm text-gray-500">2025 Fall Psychoinformatics Term Project by Rafa-0612</span>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="container mx-auto px-4 py-4">
+      <div class="grid grid-cols-12 gap-4">
+        <!-- Panel A -->
+        <section id="panel-a" class="col-span-12 md:col-span-3">
+          <div class="bg-white rounded-xl shadow p-4 h-[100vh] flex flex-col">
+            <div class="mb-3">
+              <h2 class="text-lg font-medium">Term list</h2>
+              <p class="text-xs text-gray-500">Click a term to append it to the query.</p>
+            </div>
+
+            <!-- A: search + icons -->
+            <div class="mb-3 relative">
+              <label for="a-search" class="sr-only">Filter terms</label>
+              <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                        d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                        clip-rule="evenodd" />
+                </svg>
+              </span>
+              <input id="a-search" type="text" placeholder="Filter terms…"
+                     class="w-full rounded-lg border border-gray-300 pl-9 pr-20 py-2 text-sm
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+              <button id="a-run"
+                      class="absolute right-1.5 top-1.5 rounded-md bg-orange-500 text-white
+                             px-3 py-1.5 text-xs font-medium shadow-sm hover:bg-orange-700 disabled:opacity-50">
+                Run
+              </button>
+            </div>
+
+            <!-- A: list -->
+            <div id="a-list" class="flex-1 overflow-auto smooth-scroll divide-y divide-gray-100 text-sm">
+              <div class="py-2 px-1 hover:bg-gray-50 cursor-default">(data loads here later)</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Middle column -->
+        <div class="col-span-12 md:col-span-6 flex flex-col gap-4">
+          <!-- Panel B -->
+          <section id="panel-b" class="bg-white rounded-xl shadow p-4">
+            <div class="mb-3">
+              <h2 class="text-lg font-medium">Query</h2>
+              <p class="text-xs text-gray-500">
+                Type a search query and matching studies will appear below.
+              </p>
+            </div>
+
+            <div class="relative">
+              <label for="b-query" class="sr-only">Query</label>
+              <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                        d="M12.9 14.32a8 8 0 111.414-1.414l3.387 3.387a1 1 0 01-1.414 1.414l-3.387-3.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                        clip-rule="evenodd" />
+                </svg>
+              </span>
+              <input
+                id="b-query"
+                type="text"
+                placeholder="e.g. amygdala"
+                class="w-full rounded-lg border border-gray-300 pl-9 pr-24 py-2 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-200"
+              />
+              <button
+                id="b-run"
+                class="absolute right-1.5 top-1.5 rounded-md bg-orange-500 text-white
+                       px-3 py-1.5 text-xs font-medium shadow-sm hover:bg-orange-700 disabled:opacity-50">
+                Run
+              </button>
+            </div>
+
+            <p id="b-hint" class="mt-2 text-xs text-gray-500 leading-relaxed">
+              Hint: You can use <span class="font-mono text-emerald-700">and</span> or
+              <span class="font-mono text-rose-700">not</span> to refine your search — for example,
+              use <span class="font-mono bg-gray-100 px-1 rounded">amygdala and emotion</span> to find studies containing both terms,
+              or <span class="font-mono bg-gray-100 px-1 rounded">amygdala not emotion</span> to exclude a specific term.
+            </p>
+          </section>
+
+          <!-- Panel B-Related: co-occurring terms (tiny, shows ~2 items; chips wrap) -->
+          <section id="panel-rel" class="bg-white rounded-xl shadow p-4">
+            <div class="mb-2 flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-medium">Related Terms</h2>
+                <p class="text-xs text-gray-500">Top co-occurring terms based on your query. Click a term to append it to the query. </p>
+              </div>
+              <span id="rel-count" class="hidden ml-2 inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 align-middle"></span>
+            </div>
+            <!-- 高度極小、橫向chips自動換行 -->
+            <div id="rel-list" class="h-16 overflow-auto smooth-scroll text-sm">
+              <div class="py-1 px-1 text-gray-500">Type a query above to see related terms.</div>
+            </div>
+          </section>
+
+          <!-- Panel C -->
+          <section id="panel-c" class="bg-white rounded-xl shadow p-4 h-[58vh] flex flex-col">
+            <div class="mb-2 flex items-center">
+              <h2 class="text-lg font-medium">Studies Found</h2>
+              <!-- result count badge will be injected next to h2 by JS -->
+            </div>
+            <p class="text-xs text-gray-500 mb-2">Search results will appear here. Click "save" to save the study.</p>
+            <div id="c-list" class="flex-1 overflow-auto smooth-scroll divide-y divide-gray-100 text-sm">
+              <div class="py-3">No data yet. Try a query above.</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Panel D -->
+        <section id="panel-d" class="col-span-12 md:col-span-3">
+          <div class="bg-white rounded-xl shadow p-4 h-[100vh] flex flex-col">
+            <div class="mb-2">
+              <h2 class="text-lg font-medium">Studies Saved</h2>
+              <p class="text-xs text-gray-500">Your saved studies. </p>
+            </div>
+            <div class="flex items-center gap-2 mb-3">
+              <button id="d-export" class="rounded-lg border px-3 py-1.5 text-xs">Export</button>
+              <button id="d-clear" class="rounded-lg border px-3 py-1.5 text-xs">Clear</button>
+            </div>
+            <div id="d-list" class="flex-1 overflow-auto smooth-scroll divide-y divide-gray-100 text-sm">
+              <div class="py-3">Nothing saved yet.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t bg-white mt-4">
+      <div class="container mx-auto px-4 py-3 text-xs text-gray-500">
+        © 2025 NeuroSynth Frontend. Built with Tailwind.
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
