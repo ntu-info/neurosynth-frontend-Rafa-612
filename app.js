@@ -1,5 +1,5 @@
 // app.js — AJAX + Panels A/B/C/D + Related Terms (chips layout)
-// ---------------------------------------------------------------
+// -----------------------------------------------------------
 const API_BASE = 'https://mil.psy.ntu.edu.tw:5000';
 
 /** GET helper */
