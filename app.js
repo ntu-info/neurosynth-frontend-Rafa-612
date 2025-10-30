@@ -30,9 +30,9 @@ function debounce(fn, delay = 300) {
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
 }
 
-/* =========================
+/* ========================
  * Panel A: Terms (list & filter)
- * ========================= */
+ * ======================== */
 let TERMS_ALL = [];
 let TERMS_VIEW = [];
 let TERMS_RENDERED = 0;
